@@ -51,7 +51,7 @@ Pure functions are a fundamental part of functional programming.
 When we say __pure__ we mean a function, *given the same inputs, will always return the same output*. Such a function **does not** rely on or modify the **state** of variables outside it's scope. 
 
 Pure functions do not...
-* Change things outside of their scope. They are very single-minded functions that have a sort of tunnel vision. Pure functions 'stay in their lane' in this way
+* Change things outside of their scope. They are very single-minded functions that have a sort of tunnel vision. Pure functions 'stay in their lane' in this way.
 
 With object-oriented programming we have **stateful** objects that encapsulate our data. However, in functional programming, we could encapsulate the same data in functions instead of objects. By avoiding stateful objects, each with an individual state, we could pass this data into functions as arguments. With this approach, we are opting for calculation or evaluation over having an object with a state.
 
@@ -374,6 +374,83 @@ let doubledValues = values.map(double)
 ### Functional Views and React
 
 Pure functions, predictable views
+
+### Looking Forward: Callbacks (5 minutes / 2:15)
+
+While array traversal methods are a very common example of higher-order functions, an even more common time that we want to pass functions as arguments to other functions is called a callback.
+
+These are ideas we'll cover in depth in a couple of classes but consider the following at a high level as a primer.
+
+Callbacks passed to another function to be called at some later time.
+
+All the examples that we have looked at use the function being passed as an argument immediately (and repeatedly).
+
+Callbacks are generally called at some time in the future.
+What types of things might we want to trigger a function call on?
+
+### Returning Functions from Functions
+
+We can also build functions with other functions.
+
+```js
+function multiplyBy (num) {
+  return (anotherNum) => num * anotherNum
+}
+
+const multiplyBy2 = multiplyBy(2)
+const multiplyBy5 = multiplyBy(5)
+
+console.log(multiplyBy2(4))
+console.log(multiplyBy5(4))
+```
+
+<!-- TODO: Place this section -->
+
+#### Closures (5 minutes / 2:20)
+
+Notice that even though `num` in not defined within the function being returned, it is still remembered by the function through what is called the function's **closure**.
+
+We can right some really neat code taking advantage of **closures**.
+
+```js
+function Locker(password){
+  let locked = true
+  let content
+
+  return {
+    toggle (pwd) {
+      if (pwd === password){
+        locked = !locked
+      }
+      return locked
+    },
+    read () {
+      if (locked) {
+        return "unlock to read"
+      } else {
+        return content
+      }
+    },
+    write (newContent) {
+      if (locked) {
+        return "unlock to write"
+      } else {
+        content = newContent
+        return content
+      }
+    }
+  }
+}
+```
+
+Eloquent JavaScript has a really great [explanation of closures](http://eloquentjavascript.net/03_functions.html#h_hOd+yVxaku).
+
+### Review and Questions (10 minutes / 2:30)
+
+- Check out the [Coding Meetup Kata's](http://www.codewars.com/kata/coding-meetup-number-1-higher-order-functions-series-count-the-number-of-javascript-developers-coming-from-europe) for lots more practice
+- [Node School Workshoppers](https://nodeschool.io/#workshoppers)
+- [Eloquent JS Higher-Order Functions](http://eloquentjavascript.net/05_higher_order.html)
+
 
 ## Additional Resources
   - https://github.com/getify/Functional-Light-JS
