@@ -1,83 +1,185 @@
-# Functional Programming & Higher-Order Functions
+# Concepts of Functional Programming
 
 ## Learning Objectives
 
-- Explain the idea of programming paradigms
-- Highlight advantages of functional programming
-- Identify the characteristics and benefits of pure functions
+- Explain the ideas of programming paradigms and design patterns
+- Write pure functions
 - Define the concepts of state and immutability
-- Give examples of higher order functions
+- Highlight advantages of functional programming
+- Utilize a function closure to encapsulate data 
+
+## Framing (15 minutes)
+
+This lesson presents a high-level overview of fundamental concepts from functional programming and how they relate to 'modern' JavaScript. The goal of this lesson isn't to teach you how to write in a completely pure, functional style in JavaScript, but to explore the influence of these concepts in the current landscape of JavaScript development. It's also going to provide us with an additional different lens to examine *how we write, think about, and design our code*, allowing us to understand JavaScript a little more deeply.
+
+Programming at its most basic level is the process developers undertake to instruct a computer to perform a task. Our thinking takes on very specific patterns as we learn to solve problems using code that reflects a patterned and logical approach to solving a given problem, whether that problem be an algorithm-based code challenge or providing a user interface that delivers a remarkable user experience (UX).
+
+On an even higher or more abstract level, we are also writing our code according to rules and features of JavaScript itself. Possibly without even knowing it, we've been writing JavaScript according to a certain **programming paradigm**. 
+
+So far, we dipped our toes into the **object-oriented paradigm**. We constantly interact with different kinds of objects all the time in JavaScript: Arrays `[]`, Objects `{}`, the `document` (the DOM, or Document *Object* Model), npm dependencies brought into our node programs with `require()`, `jQuery`, and so on.
+
+The **OOP** paradigm also allows us to considerably DRY up our code to achieve ***abstraction*** (a constructor function that we can invoke to produce Objects), ***encapsulation*** (related data packaged in instances of objects), and ***modularity*** (reusable modules of code, often ones that work well with specific other modules of code). We can use ES2015 classes (or just plain old pre-ES6 constructor functions) to churn out different kinds of objects. Let's look at an example where the kind of Object will be a `Car`...
+
+```js
+//ES5-style constructor function for a Car (this is essentially what an ES6 class is)
+function Car (make, model) {
+  this.make = make
+  this.model = model
+  this.fuel = 100
+  this.miles = 0
+  this.drive = function () {
+    this.fuel--
+    return ++this.miles
+  }
+}
+
+//ES6+
+class Car {
+  constructor (make, model) {
+    this.make = make
+    this.model = model
+    this.fuel = 100
+    this.miles = 0
+  }
+
+  drive () {
+    this.fuel--
+    return ++this.miles
+  }
+}
+```
+
+Each **programming paradigm** has its own **design patterns**. **Design patterns** categories of solutions to problems that the design of a programming language always faces...
+
+> A couple design patterns, briefly...
+
+| Question        | Answer          |
+|-------------------|--------------------|
+|How should data be encapsulated? | In an Object.|
+|With an object, how will data be read/written? | Using **setter and getter** methods defined on the Object|
+| What If I want to be 'passively' informed of changes to data, rather then having to 'get' the data all the time? | **subscribe and publish** methods |
+
+However, in JavaScript, we can achieve this same ***abstraction***, ***encapsulation***, and ***modularity*** by using functions in ways that draw from the **functional programming paradigm**.
 
 
-## Framing (5 minutes)
 
-Programming at its most basic level is the process developers undergo to instruct a computer to perform a task. But there are a number of programmatic approaches that can be taken to enable your computer to solve a specific problem. We call these approaches **programming paradigms**.
+### Shared State
 
-So far in WDI, we've largely relied on the *procedural programming* paradigm, which is the notion of writing a series of step-by-step instructions for your computer to carry out. For example, we wrote out every `console.log()` or `alert()` message we wanted to appear based on what our user would input as a response in "Choose You Own Adventure."
+Think about the methods on an an instance of a `Car` from the example earlier...
 
-Most recently, we dipped our toes into the **object-oriented programming** paradigm. This design pattern allows us to considerably DRY up our code to achieve ***abstraction***, ***encapsulation***, and ***modularity***.
+> Copy and paste the code below into your browser console or other REPL.
 
-Let's look at another programming paradigm...
+```js
+//ES5 style...
+function Car (make, model) {
+  this.make = make
+  this.model = model
+  this.fuel = 100
+  this.miles = 0
+  this.drive = function () {
+    this.fuel--
+    return ++this.miles
+  }
+}
 
-## Why Functional Programming? (10 minutes)
+let geoMetro = new Car('Geo', 'Metro')
+
+geoMetro.drive()
+```
+
+On the `Car` instance named `geoMetro`, there is what we call **state**, which refers to the specific values at a given moment...
+
+```
+Car { make: 'Geo', model: 'Metro', fuel: 99, miles: 1 }
+```
+
+
+### Closures as an Alternative to Objects
+
+With object-oriented programming we have **stateful** objects that encapsulate our data. However, in functional programming, we would represent the same data in functions instead of objects. By avoiding stateful objects, each with an individual state, we could pass this data into functions as arguments. With this approach, we are opting for calculation or evaluation over having an object with a state.
+
+```js
+//object-oriented approach
+class Sum {
+  constructor (initialValue) {
+    this.value = initialValue
+  }
+
+  addToTotal (valueToAdd) {
+    this.initialValue += valueToAdd
+  }
+}
+
+//functional approach 
+// https://en.wikipedia.org/wiki/Function_object#In_JavaScript
+function Sum (initialValue) {
+  const current = initialValue;
+  return function (valueToAdd) {
+    return current += valueToAdd
+  }
+}
+```
+
+
+JavaScript from the very beginning has had some functional tendencies. Brendan Eich originally envisioned the browser's having [an implementation of the functional programming language named 'Scheme' for the browser](https://auth0.com/blog/a-brief-history-of-javascript/). In other words, JavaScript, before it took shape and was named, was supposed to be a functional programming language. JavaScript as we know it ended up taking a different trajectory, but ultimately emerged as a language with some features of a functional language, primarily that *functions can referenced and passed as a value*, just as you would a number, string, null, NaN, undefined, Array, Object.
+
+> Oddly enough, functions are actually objects in JavaScript. They are special in that they can be *invoked* or called `()`. 
+
+Some of the concepts from functional programming have become important in modern JavaScript development. Ultimately, JavaScript, while having some tendencies of a functional programming language, wasn't designed as a functional programming language and has limitations in how well or how fully it can implement the functional paradigm.
+
+## Why Functional Programming? (5 minutes)
 
 Functional programming is a [hot and trendy topic](https://www.smashingmagazine.com/2014/07/dont-be-scared-of-functional-programming/) in web development right now, but it's far from being a new concept. LISP, one of the first programming languages ever created -- back in the 1950s -- had already embraced the paradigm, and has its foundations in [Alonzo Church](https://en.wikipedia.org/wiki/Alonzo_Church)'s work in [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus) in 1930s, which very strongly influenced the development of LISP.
 
-<!-- TODO: Add framing on creating careful, controlled construction of large scale programs-->
+[Ardent fans](https://www.youtube.com/watch?v=BMUiFMZr7vk&t=1s) have lauded functional programming for its emphasis on writing programs that will result in fewer bugs and more reusable code. Programs that are 'composed' in this way are built out of small, highly-predictable functions with reliable behavior, that are well suited for being building-blocks for a stable code base.
 
-[Ardent fans](https://www.youtube.com/watch?v=BMUiFMZr7vk&t=1s) have lauded functional programming for its emphasis on writing programs that will result in fewer bugs and more reusable code. The paradigm has historically been used with large-scale systems spanning thousands of networked computers, where it's critical that the program do exactly what's expected every time in the interest of performance and integrity. Many shied away from it, however, because "pure" functional languages are challenging to grasp and the paradigm was perceived as too "computer science-y" and academic.
+The functional paradigm has historically been used with large-scale systems spanning thousands of networked computers, where it's critical that the program do exactly what's expected every time in the interest of performance and integrity. 
+
+Many shied away from it, however, because "pure" functional languages are challenging to grasp and the paradigm was perceived as too "computer science-y" and academic. Functional programming does indeed have a daunting learning curve and a lot of terminology, but it is more accessible today than ever.
 
 ***So why is functional programming seeing a resurgence?***
 
-JavaScript has ahad some functional tendencies from the beginning. When [Brendan Eich](http://blog.salsitasoft.com/why-now/) created JavaScript for his then-employer Netscape, he was ordered by management to make the language look like Java. He obliged somewhat and gave JavaScript some key functional programming features. He thought that a scripting language should be action-oriented, and that this could be best achieved with an emphasis on functions. [Listen to this very awesome episode of the JavaScript Jabber podcast for more on that.](https://devchat.tv/js-jabber/124-jsj-the-origin-of-javascript-with-brendan-eich). JavaScript's initial functional tendencies allowed the possibility for it to mature into a language that could implement concepts from functional programming.
+[JavaScript is cool now](http://blog.salsitasoft.com/why-now/) and more developers than ever are writing JavaScript. As a result, JavaScript has been influenced by other languages indirectly though on a large scale, with each JavaScript developer. JavaScript's recent functional influences come from functional programming languages like LISP, Haskell, and Clojure. 
 
-[JavaScript is cool now](http://blog.salsitasoft.com/why-now/) and more developers than ever are writing JavaScript, which has absorbed some features of other programming languages as a result. JavaScript's mature functional influences come from functional programming languages like LISP, Haskell, and Clojure. Technologies like Lodash, Immutable, React, and Redux make extensive use of core concepts of functional programming, deriving their power and unique features from functional programming principles.
+JavaScript technologies like Lodash, Immutable.js, React, and Redux make extensive use of core concepts of functional programming. The power of these technologies come from how each implements these concepts. In the scope of this course, we're concerned in particular with React, and later Redux, and how fundamental functional programming concepts apply to working with these 2 technologies.
+
 
 ## What is Functional Programming? (15 minutes)
 
-Functional programming is characterized by **pure functions** and **function composition** that avoid...
-  * state or shared state
-  * mutable data
+Functional programming is characterized by **pure functions** that by definition that avoid...
   * side-effects
-
-***Huh?***
-
-Trying to understand the terminology associated with functional programming can be incredibly daunting. In the scope of this class, we're not going to go too in the weeds with the concepts, but we'll have initial exposure to them.
+  * state or shared state
+  * mutating data
+  * changing values outside of their scope
 
 ### Pure Functions
 
 Pure functions are a fundamental part of functional programming.
 
-When we say __pure__ we mean a function, *given the same inputs, will always return the same output*. Such a function **does not** rely on or modify the **state** of variables outside it's scope. 
-
-Pure functions do not...
-* Change things outside of their scope. They are very single-minded functions that have a sort of tunnel vision. Pure functions 'stay in their lane' in this way.
-
-With object-oriented programming we have **stateful** objects that encapsulate our data. However, in functional programming, we could encapsulate the same data in functions instead of objects. By avoiding stateful objects, each with an individual state, we could pass this data into functions as arguments. With this approach, we are opting for calculation or evaluation over having an object with a state.
+When we say **pure** we mean a function, ***given the same inputs, will always return the same output***. 
 
 ```js
-//object-oriented approach
-class Sum {
-  constructor(addend, augend) {
-    this.value = addend + augend
-  }
-}
+const add = (addend, augend) => addend + augend
 
-//functional approach
-const sum = (addend, augend) => addend + augend
+add(1,3) // this will always return 4 no matter what.
 ```
 
-We don't live in a black-and-white world, and functional programming is well-suited some things, and object-oriented for others. Approaches can be combined, or used to address specific problems.
+Such a function **does not** rely on or modify **state** outside its scope. Instead of sharing a parent state (in the form of a instance property on an object, or in the form of a global variable), the functional programming paradigm has functions pass around state (the data inside your application) via parameters, the input(s) to function, and `return` statements, or in other words, the output of the function. It's a bunch of functions passing data around, and a different way of organizing code than we've seen.
 
-The execution of a pure function doesn't depend on the state of the system. That is, it avoids **shared state** and **tight coupling** between parts of an application.
 
-Functions written in this way should not need to know about other functions. They should be independent and focused in the sense that each function deals with one task or problem. Functions also work together all the time, and some functions will depend on others. If function A depends on function B, function B should be a part of function A's **composition**. Building larger functions out of smaller functions gives us an approach that allows us to aggressively manage application complexity.
+### Impure Functions
 
-We also **avoid the side-effect** of modifying an external variable. As discussed in [Objects and Functions](https://github.com/ga-wdi-lessons/js-objects-functions), a [side-effect](https://github.com/ga-wdi-lessons/js-objects-functions/blob/master/functions.md#output-and-side-effects) is an observable change in the application other than the return value or [output](https://github.com/ga-wdi-lessons/js-objects-functions/blob/master/functions.md#output-and-side-effects) of a called function.
+> Pure functions don't talk to strangers (no outside variables).
+
+The execution of a pure function doesn't depend on the state of the system. It doesn't talk to global variables. It only deals with its input, and provides the same output for that specific input every time. 
+
+Programs composed of pure functions avoid **shared state** and **tight coupling** between parts of an application. 
+
+In practice, when using pure functions to pass around data, or the state of the application, they should be independent of one another, but work together. How does this work? Each function will have a very specific task which provides part of a larger solution. In many situations, you could think of each function as being a step in a list of instructions for solving a problem. Larger programs are built from **composing** each of these functions into larger, **higher-order functions**.
 
 * What's an example of a side-effect we've commonly seen?
 
-Here's an example of an impure function:
+Here's an example of an impure function...
 
 ```js
 let age = 27
@@ -104,6 +206,7 @@ increaseAgeBy(2)
   </pre>
 </details>
 
+##### Refactor the Impure
 
 We can make this function pure by not changing anything outside the function. Instead, we modify the parameter, which is in the scope of the function.
 
@@ -119,75 +222,199 @@ increaseAgeBy(age, 2)
 
 <details>
   <summary>How can you demonstrate the purity?</summary>
-  <pre>console.log(age)</pre>
+  <code>console.log(age)</code>
 </details>
+
+#### Pure or Impure?
+
+> 5 min exercise, 10 min review.
+
+For the following examples, pair with a partner and consider whether or not each function is a pure function. Is the function going to return the same thing every time for a given input? Is it changing things outside of its scope?
+
+Test the following functions out in your browser console using the code snippets below...
+
+```js
+//A
+const makeDoctor = (fullName) => `Dr. ${fullName}`
+
+//B
+function showSum (addend, augend) {
+  console.log(addend + augend)
+}
+
+//C
+const title = 'Dr. '
+function makeDoctor (fullName) {
+  return title + fullName
+}
+
+//D
+const getRandom = (min, max) =>{
+  const distance = max - min
+  const upperBound = distance + 1
+  return Math.floor(Math.random() * upperBound + min)
+}
+
+//E
+function clearCounter () {
+  counter = 0
+}
+
+//F
+const axios = require('axios')
+
+function getData (url) {
+  return axios.get(url)
+              .then(results => results)
+}
+
+//G
+function deleteFrom (array, index) {
+  array.splice(index, 1)
+  return array
+}
+
+// test the function above (G) with the lines below... 
+// const nums = [1, 2, 3, 4, 5, 6, 7]
+// deleteFrom(nums, 2)
+// console.log(nums)
+
+//H
+
+//How many side-effects are occurring here?
+const mongoose = require('mongoose')
+const Taco = require('../models/taco.js')
+
+function getAllTacos (request, response) {
+  Taco.find({})
+      .then(results => response.json(results))
+}
+```
+
+#### Views as Pure Functions in React
+
+We haven't learned much about React, perhaps the most popular views library (the V in MVC), but one fundamental idea in React is applying the concept of pure functions to views the user interface. The manner in which React renders views roughly follows this pattern, we pass in inputs into a React component and get a part of a view.
+
+<!-- TODO: refine phrasing above -->
+
+We don't live in a black-and-white world, and functional programming is well-suited some things, and object-oriented for others. Approaches can be combined, or used to address specific problems.
 
 ### Functional Programming and the DOM
 
-The value of a pure function is evident with views: a JavaScript function will construct a view by building parts of a view from some input, and create the *the exact same view from that input every time*. This adds a layer of predictability to how our views are constructed. Don't worry if the value of this isn't immediately obvious, it will be more apparent once we encounter frameworks later on in the course. In fact, modern views-libraries like React incorporate this idea into its core functioning.
+The value of a pure function is evident with views: a JavaScript function will construct a view by building parts of a view from some input, and create the *the exact same view from that input every time*. This adds a good deal of predictability to how our views are created in our applications. 
 
-In this example however, there are side-effects, mainly the interaction with the DOM. There are times when a functional programmer will be forced to write functions with side effects. Examples also include interactions with servers and databases. We are compromising the purity of these functions since we are introducing side effects, but only out absolute necessity.
+In a strict sense, the examples below contain side-effects, mainly the interaction with the DOM. There are times when JavaScript developers must write functions with side effects. Examples also include interactions with servers and databases. We are compromising the purity of these functions since we are introducing side effects, but only out absolute necessity.
 
 In one sense, we have compromised the purity of the functions, but the aim of doing functional programmer developing web applications should be to keep functions as close to pure as possible and **only involve side effects when absolutely necessary**.
 
-Note also that each function has one, specific purpose. The functions are individually designed to handle one task and do not depend on one another in order to execute. While that is true, these functions are composed to work together and their purposes are linked.  
+Note also that each function has one, specific purpose. The functions are individually designed to handle one task and do not depend on one another in order to execute. While that is true, these functions are designed to work together and their purposes are linked.
 
 ```js
+// "The call is coming from inside the function!"
+
 document.body.appendChild(
-  ul(
-    li( 
-      a('Home','/') 
+  ul( // 3 arguments are being passed to the function ul, 
+    li( // the returns of 3 calls to li
+      a('Home', '/') // each li receives the return of a call to `a` as an argument
     ),
     li( 
-      a('About','/about') 
+      a('About', '/about') 
     ),
     li( 
-      a('Contact Us','/contact') 
+      a('Contact Us', '/contact') 
     )
   )
 )
 
-function ul (children) {
-  console.log(children) // side effect: logging to the console
-  var el = document.createElement('ul')
-  for (var i = 0; i < children.length; i++) {
-    el.appendChild(children[i]) // side effect: interaction with the DOM
-  }
-  return el
+// ES6 rest parameter, from MDN: "The rest parameter syntax allows us 
+// to represent an indefinite number of arguments as [a single] array."
+// However many arguments are passed to ul, they be captured in a
+// single array, listItems.
+function ul (...listItems) { 
+  console.log(listItems) // STRANGER DANGER / Side-effect Alert: logging to the console  
+  const unorderedListElement = document.createElement('ul')
+
+//appends all the <li>s to the <ul>
+  return listItems.reduce((accumulatedListItems, listItem) => { 
+    accumulatedListItems.appendChild(listItem)
+    return accumulatedListItems
+  }, unorderedListElement)
 }
 
-function li (child) {
-  var el = document.createElement('li')
-  el.appendChild(child)
-  return el
+function li (childElement) {
+  const baseElement = document.createElement('li')
+  baseElement.appendChild(childElement)
+  return baseElement
 }
 
 function a (text, href) {
-  var anchor = document.createElement("a")
+  const anchor = document.createElement('a')
   anchor.innerHTML = text
   anchor.href = href
   return anchor
 }
 ```
 
-## Immutability & Data Flow
+We've gotten a glimpse of how to structure a small piece of a program with functions that work together, albeit in a fairly simplistic way. There are many ways to use functions together, especially with complex high-order functions. Within functional programming higher-order functions is an extremely rich category of increasingly complex functions.
 
-If we can't change a value, then we must copy it, and then modify the copy. 
+With a lot of functions passing around data, tight control over how that data is pass becomes critical. This ties into the importance of one-way or immutable data flow in functional programming. 
 
-<!-- Add diagram of primitive storage in memory -->
+
+## Immutable Data Flow
+
+Simply put, it's the practice of not changing data being accessed in the function. Think back to the splice example.
+
+```js
+function deleteFrom (array, index) {
+  array.splice(index, 1)
+  return array
+}
+
+// test the function above with the lines below... 
+// const nums = [1, 2, 3, 4, 5, 6, 7]
+// deleteFrom(nums, 2)
+// console.log(nums)
+```
+
+Since `.splice()` is a **mutator method**, it modified the state of the array it was called upon. How would we deal with that?
+
+```js
+// .slice() is nice... for copying arrays
+function deleteFrom (array, index) {
+  //   .splice() P_ermanently changes
+
+  //   .slice() first, then
+  //           .splice() 
+  array.slice().splice(index, 1)
+  return array
+}
+
+// new function same test
+// const nums = [1, 2, 3, 4, 5, 6, 7]
+// deleteFrom(nums, 2)
+// console.log(nums)
+```
+
+If we can't change a value, then our approach to copy it, and then modify the copy. We now have some intuitive basis now to see why immutability might be important as a concept. It's simply the idea of *not changing data*, and instead *copying that data, and then applying a change to the copy of that data*.
+
+When writing **pure functions**, it is important to completely avoid changing (or mutating) objects outside of the function, since that mutation would be a side-effect. This grants you greater certainty about what your code is doing, by ruling out side-effect shenanigans. Ultimately, embracing this limitation of writing as many pure functions as possible grants you the most control over how data flows.
+
+Having pointed that out, let's look at where we run into this problem.
 
 ### Data Storage in Memory
 
-Take a moment to enter in the follow code in your browser console:
+Take a moment to enter in the follow code in your browser console...
 
 ```js
   let rabbitCount = 9000
   let rabbitCensus = rabbitCount
-  rabbitCensus += 200
+  rabbitCensus += 200 //short for rabbitCensus = rabbitCensus + 200
 
+  //will rabbitCount change with the line above, or will rabbitCensus just change?
   console.log(rabbitCount)
   console.log(rabbitCensus)
 ```
+
 
 ```js
   let cats = ["Meowy Mandel", "Peter Criss", "Lion-O", "Cheetara"]
@@ -201,9 +428,7 @@ Take a moment to enter in the follow code in your browser console:
 
 1. What happened here? is `copyCats` an independent copy of `cats`?
 2. Why didn't this happen in the first example?
-3. What might this suggest about how different types are stored in memory?
-
-
+3. What might this suggest about how **different types** are stored in memory?
 
 ```js
   let spartacus = {
@@ -218,22 +443,42 @@ Take a moment to enter in the follow code in your browser console:
   console.log(noImSpartacus)
 ```
 
-We have some intuitive basis now to see why immutability might be important as a concept. **Immutability** is another core concept in functional programming. It's simply the idea of *not changing data*, and instead *copying that data, and then applying a change to the copy of that data*.
 
-This concept may seem like an awkward limitation at first, but think about the concept of an undo history: you want to make sure you have an accurate history of the commands you've entered. If you were coding a feature like an undo history, you'd want to make sure that you had an accurate record of user actions that didn't change in strange or difficult to predict ways.
-
-When writing **pure functions**, it is important to completely avoid changing (or mutating) objects outside of the function, since that mutation would be a side-effect.  This grants you greater certainty about what your code is doing, by ruling out side-effect shenanigans. Ultimately, embracing this limitation of writing as many pure functions as possible grants you the most control over how data flows.
+Immutable data flow may seem like an awkward limitation at first since it requires a different way of thinking about and dealing with data. Think about the concept of an undo history: we **really rely** on having an accurate history of the commands we've entered and actions we've taken in a program. If you were coding a feature like an undo history, you'd want to make sure that you had. Immutable data flow would be welcomed limitation in that sense. 
 
 Why does the example below violate this concept of Immutability?
 
 ```js
-const letoAtreidesII = {
-  name: 'Leto Atreides II',
-  age: 5000
+let teenAndy = {
+  name: 'Andy',
+  age: 13
 }
 
-instructor.name = "Andy"
+teenAndy.age = 20 // he's growing up so fast 😭
 ```
+
+#### Copying Objects
+
+If we wanted to make this change ***immutably***, we could create a function that would return a **new** and **separate** version of `instructor` without modifying `instructor` directly:
+
+```js
+let teenAndy = {
+  name: 'Andy',
+  age: 13
+}
+
+function updateAge (instructor, newAge) {
+  let newInstructor = Object.assign({}, instructor)
+  newInstructor.age = newAge
+  return newInstructor
+}
+
+let currentAndy = updateAge(teenAndy, "Andy")
+```
+> Object.assign() is the simplest way to make a copy of an existing object
+
+This example does not violate immutability because the original object (`instructor`) is not directly mutated. Instead, a copy of that object is created, then mutated, and finally returned. This way, the original object `instructor` is still accessible with its original values.
+
 
 ### Techniques for Dealing with Immutable Data
 
@@ -249,7 +494,6 @@ A **mutator method** is a method which *changes the thing (an array in this case
 
 `.slice()` ***is not a mutator method***. Use it for ***copying*** all or part of an array!
 
-
 <details>
   <code>
     It's easy to confuse slice and splice, 
@@ -260,29 +504,6 @@ A **mutator method** is a method which *changes the thing (an array in this case
     <p> S<em><strong>l</strong></em>ice <em><strong>l</em></strong>eaves the original alone. </p> 
   </summary>
 </details>
-
-#### Copying Objects
-
-If we wanted to make this change ***immutably***, we could create a function that would return a **new** and **separate** version of `instructor` without modifying `instructor` directly:
-
-```js
-let instructor = {
-  name: 'Nayana',
-  age: 13
-}
-
-function updateName (instructor, newName) {
-  let newInstructor = Object.assign({}, instructor)
-  newInstructor.name = newName
-  return newInstructor
-}
-
-let newAndy = updateName(instructor, "Andy")
-```
-> Object.assign() is the simplest way to make a copy of an existing object
-
-This example does not violate immutability because the original object (`instructor`) is not directly mutated. Instead, a copy of that object is created, then mutated, and finally returned. This way, the original object `instructor` is still accessible with its original values.
-
 
 #### Copying arrays of objects
 
@@ -297,6 +518,8 @@ let todos = [
   }, { 
     todo: "learn about thunks" 
   }, { 
+    todo: "what's a monad tho"
+  }, { 
     todo: "prevent head from exploding"
   }
 ]
@@ -304,90 +527,32 @@ let todos = [
 let todosCopy = todos.map(obj => Object.assign({}, obj))
 ```
 
-> Other mutator methods include `.reverse()`, `.sort()`, `.pop()`, `.push()`, `.shift()`, `.unshift()`, and many others.
+> Other noteworthy mutator methods are `.reverse()`, `.sort()`, `.pop()`, `.push()`, `.shift()`, and `.unshift()`.
 
-### Higher-Order Functions (15 minutes)
-
-Higher-order functions increase the number of ways that we can easily use smaller functions. Higher-order functions *take functions as arguments and/or return a function as output*. 
-
-Additionally, higher-order functions are considered to be another key area -- perhaps the most important -- in the functional programming paradigm.
-
-<!-- TODO: Rework: Split up composition into a separate paragraph --> 
-They are often useful in **composing** larger functions out of smaller functions, since a higher-order function can expand the number of ways a small function is used. 
-
-For example, it could take a function and use it to apply a transformation to a set.
-
-<!-- TODO: Applying vs Calling functions -->
-
-In functional programming languages, functions are values. That is, they can be stored in variables, or passed into other functions.
-
-#### Array Methods
-
-Some array methods take a function as an argument, and are therefore **higher-order** functions. Some examples of such methods are `.map`, `.forEach`, `.filter`, `.some`, `.every`, and `.reduce`.
-
-##### .forEach
-
-We briefly saw an example with `forEach` in an earlier lesson on Array methods, but let's revisit this in greater detail.
+You can also 'deep copy' objects with...
 
 ```js
-let fruits = ["apples", "bananas", "cherries"]
-
-fruits.forEach(currentFruit => {
-  console.log("Every day I eat two " + currentFruit)
-})
-
-// vs
-
-for (let i = 0; i < fruits.length; i++) {
-  console.log("Every day I eat two " + fruits[i])
-}
-```
-
-##### .map
-
-```js
-let values = [1, 2, 3, 4, 5]
-
-function double (number) {
-  return number * 2
+function deepCopy (someObject) {
+  return JSON.parse(JSON.stringify(someObject))
 }
 
-let doubledValues = values.map(value => double(value))
+//copying objects like this is tricky
+let deepObject = {
+  subObject: {
+    subSubObject: {
+      finallyThereIsAProperty: true,
+      butOhNoTheresAnArray: [{oh: 'nooo'}, {why: 'oh why'}, {mustThisObject: 'be'}, {so: 'complicated'}]
+    }
+  }
+}
 
-// Because of the function signature of the function `double`, we can use the more concise expression below instead 
-let doubledValues = values.map(double)
+deepCopy(deepObject)
 ```
 
-<!-- TODO: Function Signature Explanation -->
+<!-- TODO: Deep Copy objects. -->
 
-<!-- TODO: Expand on Event Listeners as HOFs -->
-
-#### Higher-Order Functions and Event Listeners
-
-<details>
-  <summary> 
-    Anyone remember another method that takes a function as an argument we've used quite frequently? 
-  </summary>
-  <p> <code> .on('click') </code> </p>
-</details>
-
-### Functional Views and React
-
-Pure functions, predictable views
-
-### Looking Forward: Callbacks (5 minutes / 2:15)
-
-While array traversal methods are a very common example of higher-order functions, an even more common time that we want to pass functions as arguments to other functions is called a callback.
-
-These are ideas we'll cover in depth in a couple of classes but consider the following at a high level as a primer.
-
-Callbacks passed to another function to be called at some later time.
-
-All the examples that we have looked at use the function being passed as an argument immediately (and repeatedly).
-
-Callbacks are generally called at some time in the future.
-What types of things might we want to trigger a function call on?
-
+<!-- Thunks? -->
+<!-- 
 ### Returning Functions from Functions
 
 We can also build functions with other functions.
@@ -402,24 +567,22 @@ const multiplyBy5 = multiplyBy(5)
 
 console.log(multiplyBy2(4))
 console.log(multiplyBy5(4))
-```
+``` -->
 
-<!-- TODO: Place this section -->
+## Closures, a closing example
 
-#### Closures (5 minutes / 2:20)
-
-Notice that even though `num` in not defined within the function being returned, it is still remembered by the function through what is called the function's **closure**.
+Notice that even though `content` in not defined within the function being returned, it is still remembered by the function through what is called the function's **closure**.
 
 We can right some really neat code taking advantage of **closures**.
 
 ```js
-function Locker(password){
+function Locker (password) {
   let locked = true
   let content
 
   return {
     toggle (pwd) {
-      if (pwd === password){
+      if (pwd === password) {
         locked = !locked
       }
       return locked
@@ -444,6 +607,7 @@ function Locker(password){
 ```
 
 Eloquent JavaScript has a really great [explanation of closures](http://eloquentjavascript.net/03_functions.html#h_hOd+yVxaku).
+
 
 ### Review and Questions (10 minutes / 2:30)
 
