@@ -61,73 +61,13 @@ Each **programming paradigm** has its own **design patterns**. **Design patterns
 
 However, in JavaScript, we can achieve this same ***abstraction***, ***encapsulation***, and ***modularity*** by using functions in ways that draw from the **functional programming paradigm**.
 
-
-
-### Shared State
-
-Think about the methods on an an instance of a `Car` from the example earlier...
-
-> Copy and paste the code below into your browser console or other REPL.
-
-```js
-//ES5 style...
-function Car (make, model) {
-  this.make = make
-  this.model = model
-  this.fuel = 100
-  this.miles = 0
-  this.drive = function () {
-    this.fuel--
-    return ++this.miles
-  }
-}
-
-let geoMetro = new Car('Geo', 'Metro')
-
-geoMetro.drive()
-```
-
-On the `Car` instance named `geoMetro`, there is what we call **state**, which refers to the specific values at a given moment...
-
-```
-Car { make: 'Geo', model: 'Metro', fuel: 99, miles: 1 }
-```
-
-
-### Closures as an Alternative to Objects
-
-With object-oriented programming we have **stateful** objects that encapsulate our data. However, in functional programming, we would represent the same data in functions instead of objects. By avoiding stateful objects, each with an individual state, we could pass this data into functions as arguments. With this approach, we are opting for calculation or evaluation over having an object with a state.
-
-```js
-//object-oriented approach
-class Sum {
-  constructor (initialValue) {
-    this.value = initialValue
-  }
-
-  addToTotal (valueToAdd) {
-    this.initialValue += valueToAdd
-  }
-}
-
-//functional approach 
-// https://en.wikipedia.org/wiki/Function_object#In_JavaScript
-function Sum (initialValue) {
-  const current = initialValue;
-  return function (valueToAdd) {
-    return current += valueToAdd
-  }
-}
-```
-
-
 JavaScript from the very beginning has had some functional tendencies. Brendan Eich originally envisioned the browser's having [an implementation of the functional programming language named 'Scheme' for the browser](https://auth0.com/blog/a-brief-history-of-javascript/). In other words, JavaScript, before it took shape and was named, was supposed to be a functional programming language. JavaScript as we know it ended up taking a different trajectory, but ultimately emerged as a language with some features of a functional language, primarily that *functions can referenced and passed as a value*, just as you would a number, string, null, NaN, undefined, Array, Object.
 
 > Oddly enough, functions are actually objects in JavaScript. They are special in that they can be *invoked* or called `()`. 
 
 Some of the concepts from functional programming have become important in modern JavaScript development. Ultimately, JavaScript, while having some tendencies of a functional programming language, wasn't designed as a functional programming language and has limitations in how well or how fully it can implement the functional paradigm.
 
-## Why Functional Programming? (5 minutes)
+### Why Functional Programming? (5 minutes)
 
 Functional programming is a [hot and trendy topic](https://www.smashingmagazine.com/2014/07/dont-be-scared-of-functional-programming/) in web development right now, but it's far from being a new concept. LISP, one of the first programming languages ever created -- back in the 1950s -- had already embraced the paradigm, and has its foundations in [Alonzo Church](https://en.wikipedia.org/wiki/Alonzo_Church)'s work in [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus) in 1930s, which very strongly influenced the development of LISP.
 
@@ -144,7 +84,7 @@ Many shied away from it, however, because "pure" functional languages are challe
 JavaScript technologies like Lodash, Immutable.js, React, and Redux make extensive use of core concepts of functional programming. The power of these technologies come from how each implements these concepts. In the scope of this course, we're concerned in particular with React, and later Redux, and how fundamental functional programming concepts apply to working with these 2 technologies.
 
 
-## What is Functional Programming? (15 minutes)
+### What is Functional Programming? (15 minutes)
 
 Functional programming is characterized by **pure functions** that by definition that avoid...
   * side-effects
@@ -152,7 +92,7 @@ Functional programming is characterized by **pure functions** that by definition
   * mutating data
   * changing values outside of their scope
 
-### Pure Functions
+## Pure Functions
 
 Pure functions are a fundamental part of functional programming.
 
@@ -167,7 +107,7 @@ add(1,3) // this will always return 4 no matter what.
 Such a function **does not** rely on or modify **state** outside its scope. Instead of sharing a parent state (in the form of a instance property on an object, or in the form of a global variable), the functional programming paradigm has functions pass around state (the data inside your application) via parameters, the input(s) to function, and `return` statements, or in other words, the output of the function. It's a bunch of functions passing data around, and a different way of organizing code than we've seen.
 
 
-### Impure Functions
+### Distinguishing Pure functions from Impure functions
 
 > Pure functions don't talk to strangers (no outside variables).
 
@@ -206,7 +146,7 @@ increaseAgeBy(2)
   </pre>
 </details>
 
-##### Refactor the Impure
+#### Refactor the Impure
 
 We can make this function pure by not changing anything outside the function. Instead, we modify the parameter, which is in the scope of the function.
 
@@ -225,7 +165,7 @@ increaseAgeBy(age, 2)
   <code>console.log(age)</code>
 </details>
 
-#### Pure or Impure?
+### Pure or Impure?
 
 > 5 min exercise, 10 min review.
 
@@ -291,13 +231,73 @@ function getAllTacos (request, response) {
 }
 ```
 
-#### Views as Pure Functions in React
+### Views as Pure Functions in React
 
 We haven't learned much about React, perhaps the most popular views library (the V in MVC), but one fundamental idea in React is applying the concept of pure functions to views the user interface. The manner in which React renders views roughly follows this pattern, we pass in inputs into a React component and get a part of a view.
 
 <!-- TODO: refine phrasing above -->
 
 We don't live in a black-and-white world, and functional programming is well-suited some things, and object-oriented for others. Approaches can be combined, or used to address specific problems.
+
+
+### Shared State
+
+Think about the methods on an an instance of a `Car` from the example earlier...
+
+> Copy and paste the code below into your browser console or other REPL.
+
+```js
+//ES5 style...
+function Car (make, model) {
+  this.make = make
+  this.model = model
+  this.fuel = 100
+  this.miles = 0
+  this.drive = function () {
+    this.fuel--
+    return ++this.miles
+  }
+}
+
+let geoMetro = new Car('Geo', 'Metro')
+
+geoMetro.drive()
+```
+
+On the `Car` instance named `geoMetro`, there is what we call **state**, which refers to the specific values at a given moment...
+
+```
+Car { make: 'Geo', model: 'Metro', fuel: 99, miles: 1 }
+```
+
+
+### Closures as an Alternative to Objects
+
+With object-oriented programming we have **stateful** objects that encapsulate our data. However, in functional programming, we would represent the same data in functions instead of objects. By avoiding stateful objects, each with an individual state, we could pass this data into functions as arguments. With this approach, we are opting for calculation or evaluation over having an object with a state.
+
+> Opting for for closures over objects unfortunately comes at a higher performance cost at present in JavaScript, though that could conceivably change in the future. This is also reflective of how JavaScript has only functional tendencies, and isn't a dedicated functional programming language. Objects are lighter-weight, though it's worth restating functions in JavaScript are special kinds of objects--invokable objects.
+
+```js
+//object-oriented approach
+class Sum {
+  constructor (initialValue) {
+    this.value = initialValue
+  }
+
+  addToTotal (valueToAdd) {
+    this.initialValue += valueToAdd
+  }
+}
+
+//functional approach 
+// Source: https://en.wikipedia.org/wiki/Function_object#In_JavaScript
+function Sum (initialValue) {
+  const current = initialValue;
+  return function (valueToAdd) {
+    return current += valueToAdd
+  }
+}
+```
 
 ### Functional Programming and the DOM
 
